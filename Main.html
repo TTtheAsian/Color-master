@@ -16,7 +16,164 @@
             touch-action: none;
         }
         #gameContainer {
-            width: 100%;
+            width: 100%;<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>色擒大師</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f0f0f0;
+        }
+        #game-container {
+            text-align: center;
+        }
+        #game-area {
+            width: 300px;
+            height: 300px;
+            position: relative;
+            margin: 20px auto;
+        }
+        #main-circle {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 24px;
+            color: black;
+            font-weight: bold;
+        }
+        .small-circle {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            position: absolute;
+            cursor: pointer;
+        }
+        #red { background-color: red; top: 0; left: 50%; transform: translateX(-50%); }
+        #blue { background-color: blue; top: 50%; right: 0; transform: translateY(-50%); }
+        #green { background-color: green; bottom: 0; left: 50%; transform: translateX(-50%); }
+        #yellow { background-color: yellow; top: 50%; left: 0; transform: translateY(-50%); }
+        #score, #high-score, #current-time {
+            font-size: 20px;
+            margin: 10px 0;
+        }
+        #start-btn {
+            font-size: 18px;
+            padding: 10px 20px;
+        }
+    </style>
+</head>
+<body>
+    <div id="game-container">
+        <h1>色擒大師</h1>
+        <div id="current-time">目前總秒數: 5.00</div>
+        <div id="game-area">
+            <div id="main-circle"></div>
+            <div class="small-circle" id="red"></div>
+            <div class="small-circle" id="blue"></div>
+            <div class="small-circle" id="green"></div>
+            <div class="small-circle" id="yellow"></div>
+        </div>
+        <div id="score">得分: 0</div>
+        <div id="high-score">最高分: 0</div>
+        <button id="start-btn">開始遊戲</button>
+    </div>
+
+    <script>
+        const mainCircle = document.getElementById('main-circle');
+        const smallCircles = document.querySelectorAll('.small-circle');
+        const scoreDisplay = document.getElementById('score');
+        const highScoreDisplay = document.getElementById('high-score');
+        const currentTimeDisplay = document.getElementById('current-time');
+        const startBtn = document.getElementById('start-btn');
+
+        let score = 0;
+        let highScore = 0;
+        let currentColor;
+        let countdownInterval;
+        let currentCountdown = 5;
+        let countdownTime = 5;
+        const colors = ['red', 'blue', 'green', 'yellow'];
+
+        function startGame() {
+            score = 0;
+            countdownTime = 5;
+            updateDisplay();
+            startBtn.disabled = true;
+            changeMainCircleColor();
+        }
+
+        function changeMainCircleColor() {
+            let newColor;
+            do {
+                newColor = colors[Math.floor(Math.random() * colors.length)];
+            } while (newColor === currentColor);
+            
+            currentColor = newColor;
+            mainCircle.style.backgroundColor = currentColor;
+            currentCountdown = countdownTime;
+            updateCountdown();
+            clearInterval(countdownInterval);
+            countdownInterval = setInterval(updateCountdown, 100);
+        }
+
+        function updateCountdown() {
+            currentCountdown -= 0.1;
+            mainCircle.textContent = currentCountdown.toFixed(1);
+            currentTimeDisplay.textContent = `目前總秒數: ${countdownTime.toFixed(2)}`;
+            if (currentCountdown <= 0) {
+                endGame();
+            }
+        }
+
+        function checkColor(clickedColor) {
+            if (clickedColor === currentColor) {
+                score++;
+                if (score > highScore) {
+                    highScore = score;
+                }
+                countdownTime = Math.max(0.25, 5 - score * 0.05);
+                changeMainCircleColor();
+            } else {
+                endGame();
+            }
+            updateDisplay();
+        }
+
+        function updateDisplay() {
+            scoreDisplay.textContent = `得分: ${score}`;
+            highScoreDisplay.textContent = `最高分: ${highScore}`;
+            currentTimeDisplay.textContent = `目前總秒數: ${countdownTime.toFixed(2)}`;
+        }
+
+        function endGame() {
+            clearInterval(countdownInterval);
+            startBtn.disabled = false;
+            alert(`遊戲結束！你的得分是: ${score}`);
+        }
+
+        startBtn.addEventListener('click', startGame);
+
+        smallCircles.forEach(circle => {
+            circle.addEventListener('click', () => checkColor(circle.id));
+        });
+    </script>
+</body>
+</html>
             display: flex;
             flex-direction: column;
             align-items: center;
